@@ -1,0 +1,28 @@
+[files]
+extend-exclude = [
+  ".git/",
+  ".pixi/",
+  "**/*.snap",
+  "tests/data/mapping_files/*",
+  "examples/**/**.ipynb",
+  "**/*.excalidraw",
+  "docs/research_notes",
+  "**/paddle.py",
+  "hack/",
+  ".claude/",
+  ".pixi/"
+]
+ignore-hidden = false
+
+[default.extend-identifiers]
+_placehold = "_placehold"
+intoto = "intoto"
+plt-setp = "plt.setp"
+pn = "pn"
+solvePnPRansac = "solvePnPRansac"
+
+
+[default.extend-words]
+# Don't correct the surname "Teh"
+UE = "UE"
+ue = "ue"

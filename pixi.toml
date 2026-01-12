@@ -1,0 +1,170 @@
+###############################################################
+# Workspace Definition
+###############################################################
+[workspace]
+# AUTHORS_LIST
+channels = [
+  "https://prefix.dev/conda-forge",
+  "https://conda.anaconda.org/conda-forge",
+]
+description = "PROJECT_DESCRIPTION"
+name = "template_project"
+platforms = ["linux-64"]
+preview = ["pixi-build"]
+version = "0.1.0"
+
+###############################################################
+# Package Definition
+###############################################################
+
+[package]
+name = "template_project"
+version = { workspace = true }
+
+[package.build]
+backend = { name = "pixi-build-python", version = "*" }
+
+# These are dependencies needed for the build process
+[package.host-dependencies]
+hatch-vcs = "*"
+hatchling = "*"
+platformdirs = "*"
+python = "*"
+
+# These are dependencies need for your package to run
+[package.run-dependencies]
+pandas = "*"
+python = "*"
+python-dotenv = "*"
+
+[feature.template_project.dependencies]
+template_project = { path = "." }
+
+###############################
+# default feature set dependencies
+###############################
+[dependencies]
+git = "*"
+python = ">=3.11,<=3.13"
+
+[tasks]
+bump = "tbump --only-patch $RELEASE_VERSION --config $PIXI_PROJECT_ROOT/.config/tbump.toml"
+
+build-release = "hatch build --hooks-only"
+init = "python scripts/init-template.py"
+release = "python scripts/release.py"
+
+test = { depends-on = ["test-all"], description = "Run all tests" }
+test-torch-gpu = """python -c "import torch; 
+print(f'PyTorch version: {torch.__version__}')
+print(f'CUDA available: {torch.cuda.is_available()}')
+print(f'CUDA device count: {torch.cuda.device_count()}')
+print(f'Current device: {torch.cuda.current_device() if torch.cuda.is_available() else \"CPU\"}')" """
+
+
+
+
+###############################
+# docs feature set dependencies
+###############################
+[feature.docs.dependencies]
+git-cliff = "*"
+
+[feature.docs.tasks]
+bump-changelog = { cmd = "git-cliff --unreleased --prepend CHANGELOG.md --tag $RELEASE_VERSION --config $PIXI_PROJECT_ROOT/.config/cliff.toml", env = { GITHUB_TOKEN = "$GITHUB_TOKEN" } }
+git-cliff-init = "git-cliff --init --config $PIXI_PROJECT_ROOT/.config/cliff.toml"
+
+###############################
+# dev feature set dependencies
+###############################
+
+[feature.dev.dependencies]
+tbump = "*"
+pandas-stubs = "*"
+scipy-stubs = "*"
+
+
+[feature.pytest.dependencies]
+dirty-equals = "*"
+filelock = "*"
+inline-snapshot = "*"
+py-rattler = "*"
+pytest = "*"
+pytest-rerunfailures = "*"
+pytest-timeout = "*"
+pytest-xdist = "*"
+pyyaml = "*"
+rattler-build = "*"
+rich = "*"
+tomli-w = "*"
+types-pyyaml = "*"
+
+###############################
+# pytest feature set dependencies
+###############################
+
+[feature.pytest.tasks]
+test-all = { cmd = "pytest -s --numprocesses=auto tests --config-file $PIXI_PROJECT_ROOT/.config/.pytest.toml" }
+test-specific = { cmd = "pytest -k '{{ test_substring }}' --config-file $PIXI_PROJECT_ROOT/.config/.pytest.toml", args = ["test_substring"] }
+
+###############################
+# lint feature set dependencies
+###############################
+
+[feature.lint.dependencies]
+actionlint = "*"
+basedpyright = "*"
+dprint = "*"
+go-shfmt = "*"
+ruff = "*"
+shellcheck = "*"
+taplo = "*"
+typos = "*"
+
+[feature.lint.tasks]
+actionlint = { cmd = "actionlint", env = { SHELLCHECK_OPTS = "-e SC2086" } }
+dprint-check = { cmd = "dprint check --allow-no-files --config $PIXI_PROJECT_ROOT/.config/.dprint.jsonc", description = "Check formatting with dprint" }
+dprint-fmt = { cmd = "dprint fmt --allow-no-files --incremental=false --config $PIXI_PROJECT_ROOT/.config/.dprint.jsonc", description = "Format with dprint" }
+
+toml-format = { cmd = "taplo fmt", env = { RUST_LOG = "warn" } }
+toml-lint = "taplo lint --verbose **/pixi.toml --config $PIXI_PROJECT_ROOT/.config/.taplo.toml"
+
+typos = "typos --force-exclude --config $PIXI_PROJECT_ROOT/.config/.typos.toml"
+
+typecheck-raw = "basedpyright --project pyrightconfig.json"
+typecheck = { cmd = "bash $PIXI_PROJECT_ROOT/.config/run_silent_typecheck.sh 'type checking' 'basedpyright --project pyrightconfig.json'" }
+
+# Base ruff commands (unchanged)
+ruff-format-raw = { cmd = "ruff format --exit-non-zero-on-format --force-exclude {{ flags }}", args = [{arg = "flags", default = ""}] }
+ruff-lint-raw = { cmd = "ruff check --fix --exit-non-zero-on-fix --force-exclude {{ flags }}", args = [{arg = "flags", default = ""}] }
+
+# Wrapped commands with silent output
+ruff-format = { cmd = "bash $PIXI_PROJECT_ROOT/.config/run_silent_lint.sh 'formatting' 'ruff format --exit-non-zero-on-format --force-exclude {{ flags }}'", args = [{arg = "flags", default = ""}] }
+ruff-lint = { cmd = "bash $PIXI_PROJECT_ROOT/.config/run_silent_lint.sh 'linting' 'ruff check --fix --exit-non-zero-on-fix --force-exclude {{ flags }}'", args = [{arg = "flags", default = ""}] }
+
+lint = { depends-on = ["lint-src", "lint-tests"], description = "Run all fast linters and formatters on all code" }
+
+[feature.lint.tasks.lint-src]
+depends-on = [
+  {task = "ruff-lint", args = ["--config $PIXI_PROJECT_ROOT/.config/.ruff-src.toml"]}, 
+  {task = "ruff-format", args = ["--config $PIXI_PROJECT_ROOT/.config/.ruff-src.toml"]}
+]
+description = "Run all fast linters and formatters on src/**/*.py code" 
+
+[feature.lint.tasks.lint-tests]
+depends-on = [
+  {task = "ruff-lint", args = ["--config $PIXI_PROJECT_ROOT/.config/.ruff-tests.toml"]}, 
+  {task = "ruff-format", args = ["--config $PIXI_PROJECT_ROOT/.config/.ruff-tests.toml"]}
+]
+description = "Run all fast linters and formatters on tests/**/*.py code"
+
+
+
+###############################################################
+# Virtual Environments Definitions
+###############################################################
+[environments]
+default = { features = ["dev", "pytest"], solve-group = "default" }
+docs = { features = ["docs"], no-default-feature = true, solve-group = "default" }
+lint = { features = ["lint","pytest","dev"], no-default-feature = true, solve-group = "default" }
+dev = { features = ["lint","pytest","dev","template_project"], no-default-feature = true, solve-group = "default" }
