@@ -1,4 +1,4 @@
-# PROJECT_NAME
+# ralph-eval
 This repository is to be used as a template for all repositories in the
 organization.
 
@@ -45,7 +45,7 @@ or there is an install [here](https://pixi.sh/latest/installation/#__tabbed_1_2)
 
 ### 2. Running the init task
 
-With pixi installed you can now run the init task. This will prompt you through steps to record metadata information about the project like the `PROJECT_NAME`, `PKG_NAME`, `PROJECT_DESCRIPTION`, and `AUTHORS_LIST`. It will then modify these through out the repository.
+With pixi installed you can now run the init task. This will prompt you through steps to record metadata information about the project like the `ralph-eval`, `PKG_NAME`, `PROJECT_DESCRIPTION`, and `AUTHORS_LIST`. It will then modify these through out the repository.
 
 
 ```bash

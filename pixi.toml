@@ -2,13 +2,13 @@
 # Workspace Definition
 ###############################################################
 [workspace]
-# AUTHORS_LIST
+authors = ["Logan Lang <lllangWV@gmail.com>"]
 channels = [
   "https://prefix.dev/conda-forge",
   "https://conda.anaconda.org/conda-forge",
 ]
-description = "PROJECT_DESCRIPTION"
-name = "template_project"
+description = "Repo for experimenting with ralph-loops with different models and harnesses"
+name = "ralph_eval"
 platforms = ["linux-64"]
 preview = ["pixi-build"]
 version = "0.1.0"
@@ -18,7 +18,7 @@ version = "0.1.0"
 ###############################################################
 
 [package]
-name = "template_project"
+name = "ralph_eval"
 version = { workspace = true }
 
 [package.build]
@@ -37,8 +37,8 @@ pandas = "*"
 python = "*"
 python-dotenv = "*"
 
-[feature.template_project.dependencies]
-template_project = { path = "." }
+[feature.ralph_eval.dependencies]
+ralph_eval = { path = "." }
 
 ###############################
 # default feature set dependencies
@@ -167,4 +167,4 @@ description = "Run all fast linters and formatters on tests/**/*.py code"
 default = { features = ["dev", "pytest"], solve-group = "default" }
 docs = { features = ["docs"], no-default-feature = true, solve-group = "default" }
 lint = { features = ["lint","pytest","dev"], no-default-feature = true, solve-group = "default" }
-dev = { features = ["lint","pytest","dev","template_project"], no-default-feature = true, solve-group = "default" }
+dev = { features = ["lint","pytest","dev","ralph_eval"], no-default-feature = true, solve-group = "default" }

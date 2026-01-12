@@ -1,4 +1,4 @@
-github_url = "https://github.com/YKK-xTechLab-Engineering/project-template-python"
+github_url = "https://github.com/YKK-xTechLab-Engineering/ralph-eval"
 
 [version]
 current = "0.1.0"

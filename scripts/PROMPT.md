@@ -1,7 +1,7 @@
 -1a. list open issues and compare with known-issues/:
     ```bash
     # List issue numbers from GitHub
-    curl -s "https://api.github.com/repos/GITHUB_OWNER/PROJECT_NAME/issues?state=open" | jq -r '.[].number'
+    curl -s "https://api.github.com/repos/lllangWV/ralph-eval/issues?state=open" | jq -r '.[].number'
 
     # List existing known-issues files
     ls known-issues/
@@ -10,7 +10,7 @@
 -1b. for any issues on GitHub not in known-issues/, fetch and save:
     ```bash
     # Fetch issue #N and save as markdown
-    curl -s "https://api.github.com/repos/GITHUB_OWNER/PROJECT_NAME/issues/N" | \
+    curl -s "https://api.github.com/repos/lllangWV/ralph-eval/issues/N" | \
       jq -r '"# \(.title)\n\n**Issue:** [#\(.number)](\(.html_url))\n**Author:** \(.user.login)\n**Created:** \(.created_at[:10])\n**State:** \(.state)\n\n\(.body)"' \
       > known-issues/issue-N-slug.md
     ```
